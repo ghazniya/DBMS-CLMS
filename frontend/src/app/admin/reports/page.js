@@ -14,7 +14,7 @@ export default function AdminReports() {
       return;
     }
 
-    fetch('http://localhost:5000/api/admin/reports/orders', {
+    fetch('/api/admin/reports/orders', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -47,7 +47,7 @@ export default function AdminReports() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{month}</h3>
               <div style={{ textAlign: 'right' }}>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', margin: 0 }}>Revenue (Paid): <span style={{ color: 'var(--success)', fontWeight: 'bold', fontSize: '1.1rem' }}>${monthlyData[month].revenue.toFixed(2)}</span></p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', margin: 0 }}>Revenue (Paid): <span style={{ color: 'var(--success)', fontWeight: 'bold', fontSize: '1.1rem' }}>Rs.{monthlyData[month].revenue.toFixed(2)}</span></p>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', margin: 0 }}>Total Orders: {monthlyData[month].orders.length}</p>
               </div>
             </div>
@@ -72,7 +72,7 @@ export default function AdminReports() {
                       <td style={{ padding: '0.75rem', color: 'var(--text-muted)' }}>{new Date(o.created_at).toLocaleDateString()}</td>
                       <td style={{ padding: '0.75rem' }}>{o.first_name} {o.last_name || ''}</td>
                       <td style={{ padding: '0.75rem' }}>{o.no_of_items}x {o.laundry_type}</td>
-                      <td style={{ padding: '0.75rem' }}>${Number(o.total_charge).toFixed(2)}</td>
+                      <td style={{ padding: '0.75rem' }}>Rs.{Number(o.total_charge).toFixed(2)}</td>
                       <td style={{ padding: '0.75rem', color: o.payment_status === 'Paid' ? 'var(--success)' : 'var(--warning)' }}>{o.payment_status}</td>
                       <td style={{ padding: '0.75rem' }}>{o.order_status}</td>
                     </tr>

@@ -16,7 +16,7 @@ export default function AdminUsers() {
       return;
     }
 
-    fetch('http://localhost:5000/api/admin/users', {
+    fetch('/api/admin/users', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -28,7 +28,7 @@ export default function AdminUsers() {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch('http://localhost:5000/api/admin/users', {
+      const res = await fetch('/api/admin/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(newUser)
@@ -36,7 +36,7 @@ export default function AdminUsers() {
       
       if (res.ok) {
         setShowAddForm(false);
-        const fetched = await fetch('http://localhost:5000/api/admin/users', { headers: { 'Authorization': `Bearer ${token}` } });
+        const fetched = await fetch('/api/admin/users', { headers: { 'Authorization': `Bearer ${token}` } });
         setUsers(await fetched.json());
         setNewUser({ email: '', password: '', role: 'staff', first_name: '', last_name: '', room_number: '', phone_number: '' });
       } else {

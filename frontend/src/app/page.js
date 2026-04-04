@@ -13,7 +13,7 @@ export default function LoginPage() {
     setError("");
     
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -41,8 +41,8 @@ export default function LoginPage() {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
-        <h1 className="auth-title">Welcome to HLMS</h1>
-        <p className="auth-subtitle">Hostel Laundry Management System</p>
+        <h1 className="auth-title">Welcome to CLMS</h1>
+        <p className="auth-subtitle">Central Laundry Management System</p>
         
         <form onSubmit={handleLogin}>
           {error && <div style={{ color: "var(--danger)", marginBottom: "1rem", textAlign: "center", fontSize: "0.875rem" }}>{error}</div>}

@@ -20,20 +20,20 @@ export default function StaffDashboard() {
       return;
     }
 
-    fetch('http://localhost:5000/api/staff/orders', {
+    fetch('/api/staff/orders', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => setOrders(data))
       .catch(console.error);
 
-    fetch('http://localhost:5000/api/staff/customers', {
+    fetch('/api/staff/customers', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => setCustomers(data));
 
-    fetch('http://localhost:5000/api/staff/charges', {
+    fetch('/api/staff/charges', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -47,14 +47,14 @@ export default function StaffDashboard() {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch('http://localhost:5000/api/staff/orders', {
+      const res = await fetch('/api/staff/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(newOrder)
       });
       if (res.ok) {
         setShowAddForm(false);
-        const fetched = await fetch('http://localhost:5000/api/staff/orders', { headers: { 'Authorization': `Bearer ${token}` } });
+        const fetched = await fetch('/api/staff/orders', { headers: { 'Authorization': `Bearer ${token}` } });
         setOrders(await fetched.json());
         setNewOrder({ customer_id: '', laundry_type: charges[0]?.laundry_type || '', no_of_items: 1, notes: '' });
       } else {
@@ -70,14 +70,14 @@ export default function StaffDashboard() {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch('http://localhost:5000/api/staff/customers', {
+      const res = await fetch('/api/staff/customers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(newResident)
       });
       if (res.ok) {
         setShowAddResident(false);
-        const fetched = await fetch('http://localhost:5000/api/staff/customers', { headers: { 'Authorization': `Bearer ${token}` } });
+        const fetched = await fetch('/api/staff/customers', { headers: { 'Authorization': `Bearer ${token}` } });
         setCustomers(await fetched.json());
         setNewResident({ email: '', password: '', first_name: '', last_name: '', room_number: '', phone_number: '' });
         alert("Resident added successfully!");
@@ -92,7 +92,7 @@ export default function StaffDashboard() {
 
   const updateStatus = async (id, status) => {
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5000/api/staff/orders/${id}/status`, {
+      await fetch(`/api/staff/orders/${id}/status`, {
           method: 'PUT',
           headers: { 
               'Authorization': `Bearer ${token}`,
@@ -101,7 +101,7 @@ export default function StaffDashboard() {
           body: JSON.stringify({ status })
       });
       // Refresh
-      const res = await fetch('http://localhost:5000/api/staff/orders', {
+      const res = await fetch('/api/staff/orders', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setOrders(await res.json());
@@ -109,7 +109,7 @@ export default function StaffDashboard() {
 
   const updatePayment = async (id, status) => {
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5000/api/staff/orders/${id}/payment`, {
+      await fetch(`/api/staff/orders/${id}/payment`, {
           method: 'PUT',
           headers: { 
               'Authorization': `Bearer ${token}`,
@@ -118,7 +118,7 @@ export default function StaffDashboard() {
           body: JSON.stringify({ payment_status: status })
       });
       // Refresh
-      const res = await fetch('http://localhost:5000/api/staff/orders', {
+      const res = await fetch('/api/staff/orders', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setOrders(await res.json());
@@ -127,7 +127,7 @@ export default function StaffDashboard() {
   const recordDelivery = async (id) => {
       const notes = prompt("Enter delivery notes (optional):") || "";
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5000/api/staff/orders/${id}/delivery`, {
+      await fetch(`/api/staff/orders/${id}/delivery`, {
           method: 'POST',
           headers: { 
               'Authorization': `Bearer ${token}`,
@@ -136,7 +136,7 @@ export default function StaffDashboard() {
           body: JSON.stringify({ notes })
       });
       // Refresh
-      const res = await fetch('http://localhost:5000/api/staff/orders', {
+      const res = await fetch('/api/staff/orders', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setOrders(await res.json());
@@ -209,7 +209,7 @@ export default function StaffDashboard() {
               <div>
                 <label className="input-label">Laundry Type</label>
                 <select className="input-field" required value={newOrder.laundry_type} onChange={(e) => setNewOrder({...newOrder, laundry_type: e.target.value})}>
-                  {charges.map(c => <option key={c.laundry_type} value={c.laundry_type}>{c.laundry_type} (${c.rate_per_item}/item)</option>)}
+                  {charges.map(c => <option key={c.laundry_type} value={c.laundry_type}>{c.laundry_type} (Rs.{c.rate_per_item}/item)</option>)}
                 </select>
               </div>
               <div>
@@ -245,7 +245,7 @@ export default function StaffDashboard() {
                   <td style={{ padding: '1rem', fontWeight: 'bold' }}>#{o.id}</td>
                   <td style={{ padding: '1rem' }}>{o.first_name} {o.last_name}</td>
                   <td style={{ padding: '1rem' }}>{o.room_number}</td>
-                  <td style={{ padding: '1rem' }}>${Number(o.total_charge).toFixed(2)}</td>
+                  <td style={{ padding: '1rem' }}>Rs.{Number(o.total_charge).toFixed(2)}</td>
                   <td style={{ padding: '1rem' }}>
                     {o.payment_status === 'Paid' ? (
                         <span style={{ color: 'var(--success)', fontWeight: 'bold' }}>Paid</span>

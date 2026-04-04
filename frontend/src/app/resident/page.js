@@ -14,7 +14,7 @@ export default function ResidentDashboard() {
       return;
     }
 
-    fetch('http://localhost:5000/api/resident/orders', {
+    fetch('/api/resident/orders', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -28,7 +28,6 @@ export default function ResidentDashboard() {
       <main style={{ flex: 1, padding: '2rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
             <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>My Laundry</h1>
-            <button className="btn btn-primary" onClick={() => alert("Redirecting to New Request form...")}>+ New Request</button>
         </div>
         
         <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>Order History</h2>
@@ -60,7 +59,7 @@ export default function ResidentDashboard() {
                       {o.order_status}
                     </span>
                   </td>
-                  <td style={{ padding: '1rem', fontWeight: 'bold' }}>${o.total_charge}</td>
+                  <td style={{ padding: '1rem', fontWeight: 'bold' }}>Rs.{o.total_charge}</td>
                 </tr>
               ))}
               {orders.length === 0 && <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>You have no laundry history.</td></tr>}

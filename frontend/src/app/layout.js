@@ -1,8 +1,9 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'Hostel Laundry Management',
-  description: 'Manage and track your hostel laundry needs easily.',
+  title: 'CLMS Mobile App',
+  description: 'Manage and track your central laundry needs easily.',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({ children }) {

@@ -18,21 +18,21 @@ export default function AdminDashboard() {
       return;
     }
 
-    fetch('http://localhost:5000/api/admin/users', {
+    fetch('/api/admin/users', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => setUsers(data))
       .catch(console.error);
 
-    fetch('http://localhost:5000/api/admin/charges', {
+    fetch('/api/admin/charges', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => setCharges(data))
       .catch(console.error);
 
-    fetch('http://localhost:5000/api/admin/reports/orders', {
+    fetch('/api/admin/reports/orders', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -44,14 +44,14 @@ export default function AdminDashboard() {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/charges/${encodeURIComponent(newCharge.laundry_type)}`, {
+      const res = await fetch(`/api/admin/charges/${encodeURIComponent(newCharge.laundry_type)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ rate_per_item: parseFloat(newCharge.rate_per_item) })
       });
       if (res.ok) {
         setShowAddCharge(false);
-        const fetched = await fetch('http://localhost:5000/api/admin/charges', { headers: { 'Authorization': `Bearer ${token}` } });
+        const fetched = await fetch('/api/admin/charges', { headers: { 'Authorization': `Bearer ${token}` } });
         setCharges(await fetched.json());
         setNewCharge({ laundry_type: '', rate_per_item: '' });
       } else {
@@ -64,12 +64,12 @@ export default function AdminDashboard() {
     if (!confirm(`Are you sure you want to delete ${type}?`)) return;
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/charges/${encodeURIComponent(type)}`, {
+      const res = await fetch(`/api/admin/charges/${encodeURIComponent(type)}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
-        const fetched = await fetch('http://localhost:5000/api/admin/charges', { headers: { 'Authorization': `Bearer ${token}` } });
+        const fetched = await fetch('/api/admin/charges', { headers: { 'Authorization': `Bearer ${token}` } });
         setCharges(await fetched.json());
       } else {
         alert("Error deleting charge. Note: cannot delete types currently assigned to active orders.");
@@ -94,7 +94,7 @@ export default function AdminDashboard() {
           </div>
           <div className="card">
             <h3 style={{ color: 'var(--text-muted)' }}>Total Revenue</h3>
-            <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>${totalRevenue.toFixed(2)}</p>
+            <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>Rs.{totalRevenue.toFixed(2)}</p>
           </div>
         </div>
 
@@ -116,7 +116,7 @@ export default function AdminDashboard() {
                 <input className="input-field" required value={newCharge.laundry_type} onChange={(e) => setNewCharge({...newCharge, laundry_type: e.target.value})} placeholder="e.g. Blankets" />
               </div>
               <div>
-                <label className="input-label">Rate Per Item ($)</label>
+                <label className="input-label">Rate Per Item (Rs.)</label>
                 <input className="input-field" type="number" step="0.01" min="0" required value={newCharge.rate_per_item} onChange={(e) => setNewCharge({...newCharge, rate_per_item: e.target.value})} />
               </div>
               <div style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
@@ -139,7 +139,7 @@ export default function AdminDashboard() {
               {charges.map(c => (
                 <tr key={c.laundry_type} style={{ borderBottom: '1px solid var(--border)' }}>
                   <td style={{ padding: '1rem', fontWeight: '500' }}>{c.laundry_type}</td>
-                  <td style={{ padding: '1rem', color: 'var(--success)', fontWeight: 'bold' }}>${Number(c.rate_per_item).toFixed(2)}</td>
+                  <td style={{ padding: '1rem', color: 'var(--success)', fontWeight: 'bold' }}>Rs.{Number(c.rate_per_item).toFixed(2)}</td>
                   <td style={{ padding: '1rem', textAlign: 'right' }}>
                     <button className="btn" style={{ padding: '0.25rem 0.5rem', marginRight: '0.5rem', background: 'var(--border)', color: 'var(--text-main)', fontSize: '0.875rem' }} onClick={() => { setNewCharge({laundry_type: c.laundry_type, rate_per_item: c.rate_per_item}); setShowAddCharge(true); }}>Edit</button>
                     <button className="btn" style={{ padding: '0.25rem 0.5rem', background: 'var(--danger)', color: 'white', fontSize: '0.875rem' }} onClick={() => handleDeleteCharge(c.laundry_type)}>Delete</button>

@@ -23,12 +23,12 @@ export default function Sidebar({ role }) {
     if (role === 'staff') {
       return [
         { name: 'Dashboard', path: '/staff' },
+        { name: 'History', path: '/staff/history' },
       ];
     }
     // Resident
     return [
-      { name: 'Dashboard', path: '/resident' },
-      { name: 'New Request', path: '/resident/new' },
+      { name: 'Dashboard', path: '/resident' }
     ];
   };
 
@@ -43,7 +43,7 @@ export default function Sidebar({ role }) {
       flexDirection: 'column'
     }}>
       <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '2rem', textAlign: 'center', color: 'var(--primary)' }}>
-        HLMS - {role.toUpperCase()}
+        CLMS - {role.toUpperCase()}
       </h2>
       
       <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>

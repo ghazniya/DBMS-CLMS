@@ -1,4 +1,4 @@
-# Hostel Laundry Management System (HLMS)
+# Central Laundry Management System (CLMS)
 
 A robust 3-tier full-stack application.
 

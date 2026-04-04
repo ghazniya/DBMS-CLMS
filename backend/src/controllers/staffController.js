@@ -160,3 +160,15 @@ exports.updatePaymentStatus = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+exports.getAllOrders = async (req, res) => {
+    try {
+        const orders = await pool.query(
+            "SELECT o.*, c.first_name, c.last_name, c.room_number FROM orders o JOIN customers c ON o.customer_id = c.id ORDER BY o.created_at DESC"
+        );
+        res.json(orders.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+};

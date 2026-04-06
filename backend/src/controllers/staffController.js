@@ -49,9 +49,9 @@ exports.recordDelivery = async (req, res) => {
         const orderRes = await pool.query('SELECT order_status FROM orders WHERE id = $1', [orderId]);
         if (orderRes.rows.length === 0) return res.status(404).json({ message: 'Order not found' });
         
-        // Record delivery
+        // Record delivery (upsert in case of retry)
         await pool.query(
-            'INSERT INTO delivery_details (order_id, staff_id, delivery_time, status, notes) VALUES ($1, $2, NOW(), $3, $4)',
+            'INSERT INTO delivery_details (order_id, staff_id, delivery_time, status, notes) VALUES ($1, $2, NOW(), $3, $4) ON CONFLICT (order_id) DO UPDATE SET staff_id = $2, delivery_time = NOW(), status = $3, notes = $4',
             [orderId, staffId, 'Completed', notes]
         );
         
@@ -158,6 +158,28 @@ exports.updatePaymentStatus = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
+    }
+};
+
+exports.deleteOrder = async (req, res) => {
+    const client = await pool.connect();
+    try {
+        const { id } = req.params;
+        await client.query('BEGIN');
+        await client.query('DELETE FROM delivery_details WHERE order_id = $1', [id]);
+        const result = await client.query('DELETE FROM orders WHERE id = $1 RETURNING id', [id]);
+        if (result.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ message: 'Order not found' });
+        }
+        await client.query('COMMIT');
+        res.json({ message: 'Order deleted' });
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    } finally {
+        client.release();
     }
 };
 

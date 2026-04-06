@@ -42,7 +42,7 @@ export default function LoginPage() {
     <div className="auth-wrapper">
       <div className="auth-card">
         <h1 className="auth-title">Welcome to CLMS</h1>
-        <p className="auth-subtitle">Central Laundry Management System</p>
+        <p className="auth-subtitle">Campus Laundry Management System</p>
         
         <form onSubmit={handleLogin}>
           {error && <div style={{ color: "var(--danger)", marginBottom: "1rem", textAlign: "center", fontSize: "0.875rem" }}>{error}</div>}

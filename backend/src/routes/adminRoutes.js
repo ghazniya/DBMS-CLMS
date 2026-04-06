@@ -8,6 +8,7 @@ router.use(authenticateToken, authorizeRoles('admin'));
 // Users
 router.post('/users', adminController.createUser);
 router.get('/users', adminController.getUsers);
+router.delete('/users/:id', adminController.deleteUser);
 
 // Charges
 router.get('/charges', adminController.getCharges);

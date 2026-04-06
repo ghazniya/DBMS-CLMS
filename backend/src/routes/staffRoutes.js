@@ -8,6 +8,7 @@ router.use(authenticateToken, authorizeRoles('staff', 'admin'));
 router.get('/orders', staffController.getPendingOrders);
 router.get('/history', staffController.getAllOrders);
 router.post('/orders', staffController.createOrder);
+router.delete('/orders/:id', staffController.deleteOrder);
 router.put('/orders/:id/status', staffController.updateOrderStatus);
 router.put('/orders/:id/payment', staffController.updatePaymentStatus);
 router.post('/orders/:id/delivery', staffController.recordDelivery);

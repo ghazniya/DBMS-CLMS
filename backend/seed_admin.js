@@ -1,13 +1,5 @@
-const { Pool } = require('pg');
+const pool = require('./src/config/db');
 const bcrypt = require('bcrypt');
-
-const pool = new Pool({
-  user: 'afroos',
-  host: '/var/run/postgresql',
-  database: 'hlms',
-  password: 'postgres',
-  port: 5432,
-});
 
 async function seedAdmin() {
   try {
@@ -26,7 +18,7 @@ async function seedAdmin() {
       "INSERT INTO administrators (user_id, first_name, last_name) VALUES ($1, 'System', 'Admin')",
       [userId]
     );
-    console.log('Successfully created admin user!');
+    console.log('Successfully created admin user (admin@hlms.com / admin123)');
   } catch (err) {
     console.error('Error:', err);
   } finally {

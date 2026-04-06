@@ -64,6 +64,16 @@ exports.getOrderDetails = async (req, res) => {
     }
 };
 
+exports.getCharges = async (req, res) => {
+    try {
+        const charges = await pool.query('SELECT * FROM charge ORDER BY laundry_type ASC');
+        res.json(charges.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 exports.confirmDelivery = async (req, res) => {
     try {
         const orderId = req.params.id;

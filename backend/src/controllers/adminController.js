@@ -86,13 +86,26 @@ exports.updateCharge = async (req, res) => {
 };
 
 exports.deleteCharge = async (req, res) => {
+    const client = await pool.connect();
     try {
         const { type } = req.params;
-        await pool.query('DELETE FROM charge WHERE laundry_type = $1', [type]);
+        await client.query('BEGIN');
+        // Delete delivery details for orders with this laundry type
+        await client.query(
+            'DELETE FROM delivery_details WHERE order_id IN (SELECT id FROM orders WHERE laundry_type = $1)', [type]
+        );
+        // Delete orders with this laundry type
+        await client.query('DELETE FROM orders WHERE laundry_type = $1', [type]);
+        // Delete the charge itself
+        await client.query('DELETE FROM charge WHERE laundry_type = $1', [type]);
+        await client.query('COMMIT');
         res.json({ message: 'Charge deleted' });
     } catch (err) {
+        await client.query('ROLLBACK');
         console.error(err);
         res.status(500).json({ message: 'Server error' });
+    } finally {
+        client.release();
     }
 };
 
@@ -118,6 +131,46 @@ exports.getOrderHistory = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
+    }
+};
+
+exports.deleteUser = async (req, res) => {
+    const client = await pool.connect();
+    try {
+        const { id } = req.params;
+        await client.query('BEGIN');
+        // Get customer id if user is a resident
+        const custRes = await client.query('SELECT id FROM customers WHERE user_id = $1', [id]);
+        if (custRes.rows.length > 0) {
+            const custId = custRes.rows[0].id;
+            // Delete delivery details for this customer's orders
+            await client.query(
+                'DELETE FROM delivery_details WHERE order_id IN (SELECT id FROM orders WHERE customer_id = $1)', [custId]
+            );
+            // Delete orders for this customer
+            await client.query('DELETE FROM orders WHERE customer_id = $1', [custId]);
+        }
+        // Get staff id if user is staff
+        const staffRes = await client.query('SELECT id FROM staff WHERE user_id = $1', [id]);
+        if (staffRes.rows.length > 0) {
+            const staffId = staffRes.rows[0].id;
+            // Nullify staff references in delivery details
+            await client.query('UPDATE delivery_details SET staff_id = NULL WHERE staff_id = $1', [staffId]);
+        }
+        // Delete the user (cascades to customers/staff/administrators)
+        const result = await client.query('DELETE FROM users WHERE id = $1 RETURNING id', [id]);
+        if (result.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ message: 'User not found' });
+        }
+        await client.query('COMMIT');
+        res.json({ message: 'User deleted' });
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    } finally {
+        client.release();
     }
 };
 
